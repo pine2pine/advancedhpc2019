@@ -1,0 +1,77 @@
+\documentclass[10pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+
+%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hide}[1]{}
+
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\hide{
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{cases}		 
+\usepackage{cutwin}
+\usepackage{enumerate}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{lipsum}
+\usepackage{mathrsfs}	
+\usepackage{multimedia}
+\usepackage{wrapfig}
+}
+
+	 
+%\input{/usr/local/LATEX/Lee_newcommands.tex}
+\newcommand{\itemlist}[1]{\begin{itemize}#1\end{itemize}}
+\newcommand{\enumlist}[1]{\begin{enumerate}#1\end{enumerate}}
+\newcommand{\desclist}[1]{\begin{description}#1\end{description}}
+
+\newcommand{\Answer}[1]{\begin{quote}{\color{blue}#1}\end{quote}}
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\lra}{\leftrightarrow}
+
+\title {Labwork 1: REPORT}
+\author{Nhu-Tung DOAN}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Initial parallelized solution}
+
+Using \verb+#pragma omp parallel for+, we achieved over 3.6 times speed up.
+
+\begin{verbatim}
+    USTH ICT Master 2018, Advanced Programming for HPC.
+    Warming up...
+    Starting labwork 1
+    labwork 1 CPU ellapsed 276.8ms
+    labwork 1 ellapsed 76.1ms
+\end{verbatim}
+
+\section{Using dynamic scheduling}
+Using \verb+#pragma omp parallel for schedule(dynamic)+, we achieved just a little speed up compared to the default scheduling type (76.1ms to 68.2ms).
+
+\begin{verbatim}
+    USTH ICT Master 2018, Advanced Programming for HPC.
+    Warming up...
+    Starting labwork 1
+    labwork 1 CPU ellapsed 284.1ms
+    labwork 1 ellapsed 68.2ms
+\end{verbatim}
+
+\subsection*{Thank You! :-)}
+\end{document}  
