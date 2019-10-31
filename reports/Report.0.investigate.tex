@@ -1,0 +1,80 @@
+\documentclass[10pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+
+%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hide}[1]{}
+
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\hide{
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{cases}		 
+\usepackage{cutwin}
+\usepackage{enumerate}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{lipsum}
+\usepackage{mathrsfs}	
+\usepackage{multimedia}
+\usepackage{wrapfig}
+}
+
+	 
+%\input{/usr/local/LATEX/Lee_newcommands.tex}
+\newcommand{\itemlist}[1]{\begin{itemize}#1\end{itemize}}
+\newcommand{\enumlist}[1]{\begin{enumerate}#1\end{enumerate}}
+\newcommand{\desclist}[1]{\begin{description}#1\end{description}}
+
+\newcommand{\Answer}[1]{\begin{quote}{\color{blue}#1}\end{quote}}
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\lra}{\leftrightarrow}
+
+\title {Labwork 0: REPORT}
+\author{Nhu-Tung DOAN}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Pulling codes from the lecturer's repository}
+I have already cloned a forked version of the lecturer's repository, so I don't specify again how I achieved that here. The lecturer has updated the code to fix some compilation errors, therefore I needed to pull his latest changes by doing the following:
+\begin{verbatim}
+    git remote add upstream "https://github.com/SonTG/advancedhpc2019"
+    git pull upstream master
+\end{verbatim}
+
+\section{Compiling}
+Once I had the latest code, I made sure I was in the \verb+labwork+ directory, and then executed the following:
+\begin{verbatim}
+    mkdir build
+    cd build
+    cmake ..
+    make -j
+\end{verbatim}
+
+And here's the result:
+\begin{verbatim}
+    [ 50%] Building NVCC (Device) object CMakeFiles/labwork.dir/src/labwork_generated_labwork.cu.o        
+    [ 50%] Building NVCC (Device) object CMakeFiles/labwork.dir/src/labwork_generated_jpegloader.cu.o           
+    Scanning dependencies of target labwork
+    [ 75%] Building CXX object CMakeFiles/labwork.dir/src/timer.cpp.o
+    [100%] Linking CXX executable labwork
+    [100%] Built target labwork
+\end{verbatim}
+
+\subsection*{Thank You! :-)}
+\end{document}  
