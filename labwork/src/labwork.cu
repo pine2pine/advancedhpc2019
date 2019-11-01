@@ -182,6 +182,9 @@ __global__ void rgb2gray(uchar3 *input, uchar3 *output) {
 }
 
 void Labwork::labwork3_GPU() {
+
+    printf("uchar3 is %d bytes.\n", (int)sizeof(uchar3));
+
     // Calculate number of pixels
     int pixelCount = inputImage->width * inputImage->height;
 
@@ -190,7 +193,7 @@ void Labwork::labwork3_GPU() {
     uchar3* devGray;
     
     cudaMalloc(&devInput, pixelCount *sizeof(uchar3));
-    cudaMalloc(&devGray, pixelCount *sizeof(float));
+    cudaMalloc(&devGray, pixelCount *sizeof(uchar3));
     
     // Copy from host to device
     cudaMemcpy(devInput, inputImage->buffer, pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);
@@ -201,8 +204,8 @@ void Labwork::labwork3_GPU() {
     rgb2gray<<<numBlock, blockSize>>>(devInput, devGray);
 
     // allocate memory on the host to receive output then copy from dev to host
-    outputImage = static_cast<char *>(malloc(pixelCount * sizeof(float)));
-    cudaMemcpy(outputImage, devGray, pixelCount*sizeof(float), cudaMemcpyDeviceToHost);
+    outputImage = static_cast<char *>(malloc(pixelCount * sizeof(uchar3)));
+    cudaMemcpy(outputImage, devGray, pixelCount*sizeof(uchar3), cudaMemcpyDeviceToHost);
 
     // Cleaning
     cudaFree(devInput);
