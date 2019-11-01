@@ -196,7 +196,7 @@ void Labwork::labwork3_GPU() {
     cudaMemcpy(devInput, inputImage->buffer, pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);
 
     // Processing
-    int blockSize = 64;
+    int blockSize = 16;
     int numBlock = pixelCount / blockSize;
     rgb2gray<<<numBlock, blockSize>>>(devInput, devGray);
 
