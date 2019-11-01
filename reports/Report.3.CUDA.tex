@@ -1,0 +1,80 @@
+\documentclass[10pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+
+%%%%%%%%%%%%%%%%%%%%
+\newcommand{\hide}[1]{}
+
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\hide{
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{cases}		 
+\usepackage{cutwin}
+\usepackage{enumerate}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{lipsum}
+\usepackage{mathrsfs}	
+\usepackage{multimedia}
+\usepackage{wrapfig}
+}
+
+	 
+%\input{/usr/local/LATEX/Lee_newcommands.tex}
+\newcommand{\itemlist}[1]{\begin{itemize}#1\end{itemize}}
+\newcommand{\enumlist}[1]{\begin{enumerate}#1\end{enumerate}}
+\newcommand{\desclist}[1]{\begin{description}#1\end{description}}
+
+\newcommand{\Answer}[1]{\begin{quote}{\color{blue}#1}\end{quote}}
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\lra}{\leftrightarrow}
+
+\title {Labwork 3: REPORT}
+\author{Nhu-Tung DOAN}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Initial CUDA run}
+
+For the initial run, I used the initial block size of 64 just to compare the performance to that of the OpenMP solution used in labwork #1.
+
+Here's the output of labwork #3 on ICT4 server:
+
+\begin{verbatim}
+student1@ictserver4:/storage/student1/advancedhpc2019/labwork/build$ ./labwork 3 ../data/eiffel.jpg 
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 3
+labwork 3 ellapsed 94.3ms
+\end{verbatim}
+
+And here's the output of labwork #1 (using OpenMP) on the same server:
+\begin{verbatim}
+student1@ictserver4:/storage/student1/advancedhpc2019/labwork/build$ ./labwork 1 ../data/eiffel.jpg 
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 1
+labwork 1 CPU ellapsed 2766.4ms
+labwork 1 ellapsed 661.9ms
+\end{verbatim}
+
+Obviously, the CUDA solution is much faster than the OpenMP solution (94.3ms compared to 661.9ms).
+
+\subsection*{Thank You! :-)}
+\end{document}  
