@@ -98,8 +98,8 @@ void Labwork::labwork1_CPU() {
     outputImage = static_cast<char *>(malloc(pixelCount * 3));
     for (int j = 0; j < 100; j++) {     // let's do it 100 times, otherwise it's too fast!
         for (int i = 0; i < pixelCount; i++) {
-            outputImage[i * 3] = (char) (((int) inputImage->buffer[i * 3] + (int) inputImage->buffer[i * 3 + 1] +
-                                          (int) inputImage->buffer[i * 3 + 2]) / 3);
+            outputImage[i * 3] = (char) (((unsigned char) inputImage->buffer[i * 3] + (unsigned char) inputImage->buffer[i * 3 + 1] +
+                                          (unsigned char) inputImage->buffer[i * 3 + 2]) / 3);
             outputImage[i * 3 + 1] = outputImage[i * 3];
             outputImage[i * 3 + 2] = outputImage[i * 3];
         }
@@ -116,8 +116,8 @@ void Labwork::labwork1_OpenMP() {
 
     for (int j = 0; j < 100; j++) {     // let's do it 100 times, otherwise it's too fast!
         for (int i = 0; i < pixelCount; i++) {
-            outputImage[i * 3] = (char) (((int) inputImage->buffer[i * 3] + (int) inputImage->buffer[i * 3 + 1] +
-                                          (int) inputImage->buffer[i * 3 + 2]) / 3);
+            outputImage[i * 3] = (char) (((unsigned char) inputImage->buffer[i * 3] + (unsigned char) inputImage->buffer[i * 3 + 1] +
+                                          (unsigned char) inputImage->buffer[i * 3 + 2]) / 3);
             outputImage[i * 3 + 1] = outputImage[i * 3];
             outputImage[i * 3 + 2] = outputImage[i * 3];
         }
