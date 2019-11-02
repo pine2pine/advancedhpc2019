@@ -181,9 +181,17 @@ __global__ void rgb2gray(uchar3 *input, uchar3 *output) {
     output[tid].z = output[tid].y = output[tid].x;
 }
 
-void Labwork::labwork3_GPU() {
+__global__ void rgb2gray2D(uchar3 *input, uchar3 *output) {
+    int tx = threadIdx.x + blockIdx.x * blockDim.x;
+    int ty = threadIdx.y + blockIdx.y * blockDim.y;
 
-    printf("uchar3 is %d bytes.\n", (int)sizeof(uchar3));
+    int tid = ty * blockDim.x * gridDim.x + tx;
+
+    output[tid].x = (input[tid].x + input[tid].y + input[tid].z) / 3;
+    output[tid].z = output[tid].y = output[tid].x;
+}
+
+void Labwork::labwork3_GPU() {
 
     // Calculate number of pixels
     int pixelCount = inputImage->width * inputImage->height;
@@ -213,6 +221,49 @@ void Labwork::labwork3_GPU() {
 }
 
 void Labwork::labwork4_GPU() {
+    // Calculate number of pixels
+    int pixelCount = inputImage->width * inputImage->height;
+
+    // Allocate CUDA memory
+    uchar3* devInput;
+    uchar3* devGray;
+    
+    cudaMalloc(&devInput, pixelCount *sizeof(uchar3));
+    cudaMalloc(&devGray, pixelCount *sizeof(uchar3));
+    
+    // Copy from host to device
+    cudaMemcpy(devInput, inputImage->buffer, pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);
+
+    // Define the block and grid dimensions for our kernel
+
+    dim3 dimBlock(8, 4);  // Let's try block size = warp size
+    dim3 dimGrid;
+
+    int numOfBlocks = pixelCount / (dimBlock.x * dimBlock.y);
+
+    if ( (pixelCount % (dimBlock.x * dimBlock.y)) > 0 ) {
+	numOfBlocks++;
+    }
+
+    dimGrid.x = 16;
+    dimGrid.y = numOfBlocks / dimGrid.x;
+    if ( (numOfBlocks % dimGrid.x) > 0 ) {
+    	dimGrid.y++;
+    }
+
+    printf("Pixels: %d\n", pixelCount);
+    printf("Grid: %d x %d\n", dimGrid.x, dimGrid.y );
+
+    // Launching our kernel
+    rgb2gray2D<<<dimGrid, dimBlock>>>(devInput, devGray);
+
+    // allocate memory on the host to receive output then copy from dev to host
+    outputImage = static_cast<char *>(malloc(pixelCount * sizeof(uchar3)));
+    cudaMemcpy(outputImage, devGray, pixelCount*sizeof(uchar3), cudaMemcpyDeviceToHost);
+
+    // Cleaning
+    cudaFree(devInput);
+    cudaFree(devGray);
 }
 
 void Labwork::labwork5_CPU() {
