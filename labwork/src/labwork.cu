@@ -181,11 +181,17 @@ __global__ void rgb2gray(uchar3 *input, uchar3 *output) {
     output[tid].z = output[tid].y = output[tid].x;
 }
 
-__global__ void rgb2gray2D(uchar3 *input, uchar3 *output) {
+__global__ void rgb2gray2D(uchar3 *input, uchar3 *output, int pixelCount) {
     int tx = threadIdx.x + blockIdx.x * blockDim.x;
     int ty = threadIdx.y + blockIdx.y * blockDim.y;
 
     int tid = ty * blockDim.x * gridDim.x + tx;
+
+    // we use more threads than needed (by having more blocks if necessary)
+    // so we'll need to check if this particular thread is for a pixel that
+    // doesn't exist. If that is the case, we simply return.
+
+    if (tid >= pixelCount) return;
 
     output[tid].x = (input[tid].x + input[tid].y + input[tid].z) / 3;
     output[tid].z = output[tid].y = output[tid].x;
@@ -207,7 +213,7 @@ void Labwork::labwork3_GPU() {
     cudaMemcpy(devInput, inputImage->buffer, pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);
 
     // Processing
-    int blockSize = 16;
+    int blockSize = 64;
     int numBlock = pixelCount / blockSize;
     rgb2gray<<<numBlock, blockSize>>>(devInput, devGray);
 
@@ -236,7 +242,7 @@ void Labwork::labwork4_GPU() {
 
     // Define the block and grid dimensions for our kernel
 
-    dim3 dimBlock(8, 4);  // Let's try block size = warp size
+    dim3 dimBlock(16, 8);  // Let's try block size = 4 * warp size
     dim3 dimGrid;
 
     int numOfBlocks = pixelCount / (dimBlock.x * dimBlock.y);
@@ -245,17 +251,17 @@ void Labwork::labwork4_GPU() {
 	numOfBlocks++;
     }
 
-    dimGrid.x = 16;
+    dimGrid.x = 8;
     dimGrid.y = numOfBlocks / dimGrid.x;
     if ( (numOfBlocks % dimGrid.x) > 0 ) {
     	dimGrid.y++;
     }
 
-    printf("Pixels: %d\n", pixelCount);
-    printf("Grid: %d x %d\n", dimGrid.x, dimGrid.y );
+    // printf("Pixels: %d\n", pixelCount);
+    // printf("Grid: %d x %d\n", dimGrid.x, dimGrid.y );
 
     // Launching our kernel
-    rgb2gray2D<<<dimGrid, dimBlock>>>(devInput, devGray);
+    rgb2gray2D<<<dimGrid, dimBlock>>>(devInput, devGray, pixelCount);
 
     // allocate memory on the host to receive output then copy from dev to host
     outputImage = static_cast<char *>(malloc(pixelCount * sizeof(uchar3)));
@@ -267,6 +273,42 @@ void Labwork::labwork4_GPU() {
 }
 
 void Labwork::labwork5_CPU() {
+    const unsigned char gaussianKernel[7][7] =
+    {
+        {  0,  0,  1,  2,  1,  0,  0},
+        {  0,  3, 13, 22, 13,  3,  0},
+        {  1, 13, 59, 97, 59, 13,  1},
+        {  2, 22, 97,159, 97, 22,  2},
+        {  1, 13, 59, 97, 59, 13,  1},
+        {  0,  3, 13, 22, 13,  3,  0},
+        {  0,  0,  1,  2,  1,  0,  0}
+    };
+
+    int pixelCount = inputImage->width * inputImage->height;
+    outputImage = static_cast<char *>(malloc(pixelCount * sizeof(uchar3)));
+
+    for (int y = 0; y < inputImage->height; y++) {
+        for (int x = 0; x < inputImage->width; x++) {
+            int rTotal = 0;
+            int gTotal = 0;
+            int bTotal = 0;
+            for ( int dx = -3; dx < 4; dx++) {
+                for (int dy = -3; dy < 4; dy++) {
+                    if ( ((x+dx) >= 0) && ((x+dx) < inputImage->width) && ((y+dy) >= 0) && ((y+dy) < inputImage->height) )
+                    {
+                        int pixelIdx = (y+dy) * inputImage->width + (x+dx);
+                        rTotal += (inputImage->buffer[pixelIdx*3] * gaussianKernel[dx+3][dy+3]);
+                        gTotal += (inputImage->buffer[pixelIdx*3 + 1] * gaussianKernel[dx+3][dy+3]);
+                        bTotal += (inputImage->buffer[pixelIdx*3 + 2] * gaussianKernel[dx+3][dy+3]);
+                    } 
+                }
+            }
+            int outputPixelIdx = inputImage->width * y + x;
+            outputImage[outputPixelIdx*3] = rTotal / 1003;
+            outputImage[outputPixelIdx*3 + 1] = gTotal / 1003;
+            outputImage[outputPixelIdx*3 + 2] = bTotal / 1003;
+        }
+    }
 }
 
 void Labwork::labwork5_GPU() {
